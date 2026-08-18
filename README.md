@@ -1,21 +1,52 @@
-# The-Boundary-Paradox_Geometric_Dist
-Why the fastest event in cricket is the least predictable one
-Cricket, like many sports, is rich with patterns waiting to be discovered through the lens of statistics. In this analysis, we explore a fascinating question: How many legal deliveries does a batting team typically face before recording their first wicket or first boundary?
-Using ball-by-ball data from the IPL 2026 season, we applied the Geometric distribution—a probability model that describes the number of trials needed to achieve the first success. Our analysis reveals:
-First wicket: A batting team faces, on average, 19.13 legal deliveries before their first wicket falls.
-First boundary: A team typically needs only 4.44 legal deliveries to hit their first boundary.
-The "Memoryless" property: The Geometric distribution suggests that the probability of a wicket or boundary doesn't depend on how many balls have already been bowled. Our data shows this holds remarkably well for wickets but deviates for boundaries.
-This report unpacks these findings and explores how the game's different phases—powerplay, middle overs, and death overs—dramatically alter these probabilities.
-1. Introduction: The Geometry of Cricket
-1.1 The Question Behind the Numbers
-Every cricket fan knows the tension of the first over. Will the opening batsman hit a boundary? Will the bowler strike early? But have you ever wondered: How many balls does it really take, on average, for these events to occur?
-Enter the Geometric distribution—a statistical model that answers exactly this type of question. It helps us understand the "waiting time" until a specific event happens for the first time.
-1.2 Our Data Source
-We analyzed ball-by-ball data from the IPL 2026 season, spanning:
-17,501 total deliveries
-16,639 legal deliveries (excluding wides, no-balls, etc.)
-870 wickets from legal deliveries
-3,746 boundaries (4s and 6s) from legal deliveries
-For each innings, we tracked:
-The delivery number on which the first wicket fell (or whether no wicket fell—a "censored" observation)
-The delivery number on which the first boundary was scored (or whether no boundary was scored)
+# IPL Geometric / Survival Analysis — Reproducible Project
+
+## Purpose
+This project reproduces the useful parts of the supplied Jupyter notebook while **never deleting or overwriting the raw ball-by-ball data**.
+
+The notebook's later cells **In [4] and In [5] (Weibull/Log-Logistic model comparison and hazard-model plotting)** are intentionally excluded, as requested.
+
+## Data
+Place the source file at:
+`data/data-ball_by_ball.csv`
+
+The supplied source file has 17,501 rows and 24 columns.
+
+## Important analytical definitions
+- An **attempt** is one legal delivery.
+- A wicket event is `wicket_flag == True` on a legal delivery.
+- A boundary event is `runs_off_bat` equal to **4 or 6** on a legal delivery.
+- Non-legal deliveries are NOT deleted from the raw dataset. They are excluded only from analyses where the unit of analysis is a legal delivery.
+- Innings with no first event are treated as right-censored for Kaplan–Meier analysis.
+
+## Why this is more reproducible than the notebook
+1. No hard-coded Windows path.
+2. Every script can be rerun from the project root.
+3. Raw rows are preserved.
+4. Derived legal-delivery and all-row enriched files are saved separately.
+5. Input SHA-256 is recorded.
+6. Boolean parsing is explicit and does not incorrectly convert the string "FALSE" to True.
+7. Analysis definitions are written in code.
+8. Outputs are saved to stable folders.
+
+## Run
+Create a virtual environment, install:
+`pip install -r requirements.txt`
+
+Then:
+`python src/07_run_all.py`
+
+## Outputs
+- `outputs/tables/data_validation_summary.csv`
+- `outputs/tables/ball_by_ball_enriched_all_rows.csv`
+- `outputs/tables/legal_deliveries_prepared.csv`
+- `outputs/tables/innings_survival_dataset.csv`
+- `outputs/tables/geometric_baseline_summary.csv`
+- `outputs/tables/km_first_wicket_survival.csv`
+- `outputs/tables/km_first_boundary_survival.csv`
+- `outputs/tables/memoryless_comparison.csv`
+- `outputs/tables/first_event_phase_summary.csv`
+- `outputs/tables/phase_chi_square.csv`
+- `outputs/figures/kaplan_meier_wicket_boundary.png`
+
+## Reproducibility / publication note
+The raw file remains the source of truth. Every filtering step creates a new derived object/file. Therefore, saying "legal deliveries were used" does not mean non-legal observations were deleted from the dataset.
