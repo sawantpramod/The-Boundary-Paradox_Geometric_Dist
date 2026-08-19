@@ -1,4 +1,5 @@
-# IPL Geometric / Survival Analysis — Reproducible Project
+# Waiting for a Boundary in T20 Cricket
+What Aggregate Waiting Times Can Hide
 
 ## Purpose
 This project reproduces the useful parts of the supplied Jupyter notebook while **never deleting or overwriting the raw ball-by-ball data**.
