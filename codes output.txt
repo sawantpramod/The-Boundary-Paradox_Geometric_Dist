@@ -1,0 +1,350 @@
+(venv) C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible>python scripts\10_run_all.py
+================================================================================
+RUNNING ALL SCRIPTS IN SEQUENCE
+================================================================================
+
+================================================================================
+RUNNING 01_validate_and_prepare.py
+================================================================================
+=== DATA VALIDATION / INTEGRITY ===
+raw_rows: 17501
+raw_columns: 24
+legal_delivery_rows: 16639
+non_legal_rows: 862
+raw_wicket_rows: 875
+legal_wicket_rows: 870
+non_legal_wicket_rows: 5
+legal_boundary_rows: 3746
+matches: 73
+innings: 146
+raw_sha256: f0d43ace280af92a49fceacc6b6af43d3b2b40853aa5dbc4d8de1dc02f6e7855
+Saved ALL rows: C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible\outputs\tables\ball_by_ball_enriched_all_rows.csv
+Saved legal-delivery analysis view: C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible\outputs\tables\legal_deliveries_prepared.csv
+RAW DATA IS NOT DELETED OR OVERWRITTEN.
+
+SUCCESS: 01_validate_and_prepare.py completed.
+
+================================================================================
+RUNNING 02_build_innings.py
+================================================================================
+=== INNINGS-LEVEL FIRST-EVENT DATA ===
+Innings analysed: 146
+First wicket observed: 146
+First boundary observed: 146
+No first wicket observed (censored): 0
+No first boundary observed (censored): 0
+Verification: innings_survival_dataset.csv contains phase columns.
+
+SUCCESS: 02_build_innings.py completed.
+
+================================================================================
+RUNNING 03_geometric_baseline.py
+================================================================================
+=== GEOMETRIC BASELINE ===
+         event  legal_deliveries  event_count    p_hat  geometric_mean_1_over_p  uncensored_first_event_mean  censored_innings
+  First wicket             16639          870 0.052287                19.125287                    22.876712                 0
+First boundary             16639         3746 0.225134                 4.441805                     4.308219                 0
+
+SUCCESS: 03_geometric_baseline.py completed.
+
+================================================================================
+RUNNING 04_kaplan_meier.py
+================================================================================
+=== KAPLAN–MEIER ===
+Median first wicket: 17.0
+Median first boundary: 4.0
+
+SUCCESS: 04_kaplan_meier.py completed.
+
+================================================================================
+RUNNING 05_memoryless_property.py
+================================================================================
+=== MEMORYLESS-PROPERTY DIAGNOSTIC ===
+         event  m  n  conditional_survival_S_m+n_over_S_m  unconditional_survival_S_n  difference
+  First wicket  5  5                             0.844262                    0.835616    0.008646
+  First wicket  5 10                             0.631148                    0.705479   -0.074332
+  First wicket 10  5                             0.747573                    0.835616   -0.088044
+  First wicket 10 10                             0.621359                    0.705479   -0.084120
+  First wicket 15  5                             0.831169                    0.835616   -0.004448
+  First wicket 15 10                             0.649351                    0.705479   -0.056129
+First boundary  2  2                             0.557895                    0.650685   -0.092790
+First boundary  2  5                             0.210526                    0.287671   -0.077145
+First boundary  5  2                             0.476190                    0.650685   -0.174494
+First boundary  5  5                             0.095238                    0.287671   -0.192433
+First boundary 10  2                             0.750000                    0.650685    0.099315
+First boundary 10  5                             0.500000                    0.287671    0.212329
+
+For a geometric process, S(m+n)/S(m) = S(n). This is a diagnostic, not a formal hypothesis test.
+
+============================================================
+CHI-SQUARE GOODNESS-OF-FIT TEST (DISCRETE)
+============================================================
+NOTE: KS test is NOT used here because wait-times are discrete.
+      Chi-Square is the correct test for discrete distributions.
+
+Using BOUNDARY_RATE = 0.268748 (powerplay phase-specific rate)
+Using WICKET_RATE = 0.052287 (pooled rate, spans all phases)
+
+
+BOUNDARIES:
+  - Number of innings: 146
+  - Chi-Square Statistic: 18.5060
+  - Degrees of Freedom: 6
+  - p-value: 0.0051
+  - Rate used: 0.268748
+
+WICKETS:
+  - Number of innings: 146
+  - Chi-Square Statistic: 10.0473
+  - Degrees of Freedom: 7
+  - p-value: 0.1859
+  - Rate used: 0.052287
+
+============================================================
+INTERPRETATION
+============================================================
+
+BOUNDARIES:
+  * p = 0.0051 < 0.05 -> Statistically significant deviation from geometric distribution.
+  -> The memoryless property does NOT hold for boundaries (at aggregate level).
+  -> The chance that these gaps are random noise is less than 5%.
+
+WICKETS:
+  - p = 0.1859 >= 0.05 -> No statistically significant deviation.
+  -> The memoryless property holds for wickets (at aggregate level).
+
+============================================================
+SUMMARY
+============================================================
+BOUNDARIES: p = 0.0051 -> REJECTS geometric model
+WICKETS:   p = 0.1859 -> FAILS TO REJECT geometric model
+
+Note: This formal test confirms whether the observed deviations are statistically significant.
+      The 'diagnostic' above is a visual/comparative tool; the p-value is the definitive test.
+
+SUCCESS: 05_memoryless_property.py completed.
+
+================================================================================
+RUNNING 06_phase_analysis.py
+================================================================================
+=== PHASE-WISE PROBABILITIES ===
+      phase  legal_balls  p_wicket  p_boundary
+ power_play         5254  0.044157    0.268748
+middle_over         7754  0.046299    0.188548
+ death_over         3631  0.076838    0.240154
+
+SUCCESS: 06_phase_analysis.py completed.
+
+================================================================================
+RUNNING 07_analysis_main.py
+================================================================================
+Saved legal deliveries: tables\legal_deliveries_prepared.csv
+Saved innings dataset: tables\innings_survival_dataset.csv
+
+=== BASELINE PROBABILITIES ===
+p_wicket   = 0.0523  (1/p = 19.13)
+p_boundary = 0.2251  (1/p = 4.44)
+
+=== EMPIRICAL FIRST-EVENT MEANS (uncensored) ===
+Mean balls to first wicket   = 22.88  (vs theoretical 19.13)
+Mean balls to first boundary = 4.31  (vs theoretical 4.44)
+
+=== KAPLAN-MEIER MEDIANS ===
+Median first wicket:   17.0
+Median first boundary: 4.0
+
+All outputs saved successfully.
+
+SUCCESS: 07_analysis_main.py completed.
+
+================================================================================
+RUNNING 08_bootstrap_m10_analysis.py
+================================================================================
+[OK] Loaded innings data: 146 innings
+======================================================================
+BOOTSTRAP CONFIDENCE ANALYSIS: m=10 Boundary Point
+======================================================================
+
+At-Risk Counts by Checkpoint:
+  m=2:  121 innings (boundary hasn't happened before ball 2)
+  m=5:  53 innings (boundary hasn't happened before ball 5)
+  m=10: 8 innings (boundary hasn't happened before ball 10)
+
+Using boundary rate: 0.268748 (from powerplay phase analysis)
+  [WARNING] Only 8 innings at risk at m=10
+   Results are highly unstable - proceed with caution
+
+
+----------------------------------------------------------------------
+RESULTS
+----------------------------------------------------------------------
+
+[Data Summary]
+  Innings at risk at m=10: 8
+  Boundary on ball 10 itself: 4 innings
+  Survived past ball 10: 4 innings
+  Observed probability of boundary ON ball 10: 0.5000
+  Geometric expectation (conditional, P(X=10|X>=10)): 0.2687
+
+[Bootstrap Results] (n=10,000 iterations):
+  Mean estimate: 0.5033
+  Median estimate: 0.5000
+  Standard error: 0.1755
+
+[Confidence Intervals]
+  95% CI: [0.1250, 0.8750]
+  90% CI: [0.2500, 0.7500]
+
+[Interpretation]
+  [WARNING] Only 8 innings at risk.
+  The observed deceleration pattern is suggestive
+  Should be interpreted with caution due to small sample size.
+  Bootstrapped confidence intervals are wide and unstable.
+
+  Observed prob (0.5000) vs Geometric expectation (0.2687)
+  Difference: 0.2313
+  Observed probability is WITHIN the 95% bootstrap CI
+  Not enough evidence to reject geometric model
+
+======================================================================
+DISAMBIGUATION NOTE FOR ARTICLE:
+
+  At m=10, 8 innings hadn't yet had a boundary by ball 9.
+  Of those 8 innings:
+  - 4 got their first boundary on ball 10 itself
+  - 4 survived past ball 10
+
+  The observed pattern of deceleration at this point is
+  suggestive but should be interpreted with caution due
+  to small sample size.
+
+  For article: Report as:
+  'At m=10, only 8 innings remain at risk.'
+  'The early negative gaps (m=2, m=5) are built on
+   121 and 53 innings at risk respectively,'
+  'and are statistically stable. The m=10 point is
+   suggestive but should be interpreted with caution.'
+======================================================================
+
+----------------------------------------------------------------------
+CONSISTENCY CHECK
+----------------------------------------------------------------------
+  Observed probability (0.5000) = 4/8
+  This matches the breakdown above.
+  The empirical and theoretical quantities now test the SAME event (boundary on ball m).
+======================================================================
+
+[OK] Results saved to: C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible\outputs\tables\bootstrap_m10_results.csv
+
+SUCCESS: 08_bootstrap_m10_analysis.py completed.
+
+================================================================================
+RUNNING 09_stratification_analysis.py
+================================================================================
+[OK] Loaded innings data: 146 innings
+[OK] Loaded ball-by-ball data: 16639 deliveries
+
+======================================================================
+STRATIFICATION ANALYSIS: BOUNDARYS
+Splitting into 3 groups based on boundary rate
+======================================================================
+
+Total innings with rate data: 146
+Boundary rate range: [0.0909, 0.3500]
+Mean boundary rate: 0.2262
+Median boundary rate: 0.2250
+
+
+--- Low rate Group (n=48) ---
+  Group boundary rate: 0.1657
+  Observed boundarys: 48
+  Chi-square: 2.7866
+  p-value: 0.2483
+  Cramér's V: 0.2409 (small-medium)
+  Geometric pattern: YES
+
+--- Middle rate Group (n=48) ---
+  Group boundary rate: 0.2271
+  Observed boundarys: 48
+  Chi-square: 5.9327
+  p-value: 0.1149
+  Cramér's V: 0.3516 (medium)
+  Geometric pattern: YES
+
+--- High rate Group (n=50) ---
+  Group boundary rate: 0.2831
+  Observed boundarys: 50
+  Chi-square: 3.6342
+  p-value: 0.3038
+  Cramér's V: 0.2696 (small-medium)
+  Geometric pattern: YES
+
+======================================================================
+SUMMARY
+======================================================================
+
+       group  n_innings  boundary_rate  p_value  cramers_v  effect_size  is_geometric
+   Low rate         48       0.165737 0.248251   0.240946 small-medium          True
+Middle rate         48       0.227085 0.114932   0.351564       medium          True
+  High rate         50       0.283094 0.303764   0.269601 small-medium          True
+
+Groups showing geometric pattern: 3/3
+
+----------------------------------------------------------------------
+STATISTICAL POWER CAVEAT
+----------------------------------------------------------------------
+The chi-square tests within each group have only 1 degree of freedom
+(compared to 6 in the pooled test), with roughly one-third the sample size.
+Tests with this level of power will fail to reject the null unless the
+effect is quite large.
+
+The 'not rejected' finding should be read as:
+  'The data are consistent with the geometric model within groups,'
+  NOT as definitive proof of geometric behavior.
+
+----------------------------------------------------------------------
+CIRCULARITY CAVEAT
+----------------------------------------------------------------------
+The stratification variable - each innings' own realized boundary rate -
+is partly determined by the same events (including the first boundary itself)
+that the outcome variable is built from.
+
+An innings that gets an early boundary mechanically nudges its own 'rate'
+upward, which could bias groups toward looking more internally consistent
+than an independent proxy (ground, opposition attack, team aggression profile)
+would.
+
+A stronger test would use pre-match covariates rather than post-hoc realized rates.
+
+[OK] Results saved to: C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible\outputs\tables\stratification_boundary_results.csv
+
+[OK] Summary saved to: C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible\outputs\tables\stratification_summary_boundary.csv
+
+======================================================================
+CONCLUSION
+======================================================================
+[OK] All 3 groups show geometric pattern.
+-> The memoryless property holds even within homogeneous subgroups.
+-> This supports the geometric model as a valid description of boundary timing.
+
+ HOWEVER: This should be read as 'consistent with geometric'
+   not as definitive proof. The tests have limited statistical power
+   and the grouping variable is subject to circularity concerns.
+
+Interpretation for article:
+  - If all groups show geometric pattern: The aggregate non-geometric
+    result may be driven by heterogeneity between innings.
+  - If groups show mixed results: Scoring rate may moderate
+    the memorylessness property.
+  - If no groups show geometric pattern: The memorylessness
+    failure is fundamental and not just an aggregation artifact.
+
+======================================================================
+
+SUCCESS: 09_stratification_analysis.py completed.
+
+================================================================================
+ALL SCRIPTS COMPLETED
+================================================================================
+
+(venv) C:\Users\admin\OneDrive\Desktop\Medium.Com\M1\Geometric distribution\Reproducible>
